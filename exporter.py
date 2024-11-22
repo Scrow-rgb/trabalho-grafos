@@ -1,8 +1,7 @@
 from main import Grafo  # Importando a classe Grafo do arquivo main
 
-def gerar_dot(grafo_obj, nome_arquivo):
-
-    with open(nome_arquivo, 'w') as arquivo:
+def gerar_dot(grafo_obj):
+    with open("grafo.dot", 'w') as arquivo:
         # Escolher o tipo de grafo (direcionado ou não)
         if grafo_obj.direcionado:
             arquivo.write("digraph G {\n")
