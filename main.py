@@ -9,7 +9,9 @@ class Graph:
     def __init__(self, num_vertices, is_directed=False):
         self.num_vertices = num_vertices
         self.is_directed = is_directed
-        self.vertices = [chr(65 + i) for i in range(num_vertices)]  # Gera letras A, B, C...
+        self.vertices = [
+            chr(65 + i) if i < 26 else str((i+1)) for i in range(num_vertices)
+        ]  # Gera letras A-Z e números para índices >= 26
         self.adj_matrix = [[0] * num_vertices for _ in range(num_vertices)]
         self.adj_list = defaultdict(list)
         self.vertex_map = {v: i for i, v in enumerate(self.vertices)}
@@ -203,9 +205,10 @@ def main():
     num_vertices = int(input("Digite o número de vértices do grafo: "))
     is_directed = input("O grafo é direcionado? (s/n): ").strip().lower() == 's'
     graph = Graph(num_vertices, is_directed)
-
+    # gerar_dot(graph)
     print("\nOs vértices do grafo serão identificados automaticamente como:")
     print(" ".join(graph.vertices))
+    gerar_dot(graph)
 
     while True:
         print("\nMenu:")
@@ -233,70 +236,83 @@ def main():
             weight = int(input("Digite o peso da aresta (ou 1 para padrão): "))
             graph.add_edge(u, v, weight)
             print("Aresta adicionada com sucesso!")
+
         elif choice == "2":
             u = input(f"Digite o vértice de origem ({' '.join(graph.vertices)}): ").strip().upper()
             v = input(f"Digite o vértice de destino ({' '.join(graph.vertices)}): ").strip().upper()
             graph.remove_edge(u, v)
             print("Aresta removida com sucesso!")
+
         elif choice == "3":
-            print("Matriz de Adjacência:")
-            gerar_dot(graph)
+            print("\nMatriz de Adjacência:")
             graph.print_adj_matrix()
+
         elif choice == "4":
-            print("Lista de Adjacência:")
+            print("\nLista de Adjacência:")
             graph.print_adj_list()
+
         elif choice == "5":
-            start = input(f"Digite o vértice inicial ({' '.join(graph.vertices)}): ").strip().upper()
+            start = input(f"\nDigite o vértice inicial ({' '.join(graph.vertices)}): ").strip().upper()
             distances = graph.dijkstra(start)
             print("Menor distância do vértice", start, "para os outros vértices:")
             for vertex, distance in distances.items():
                 print(f"Vértice {vertex}: {distance}")
+
         elif choice == "6":
             if graph.grafo_conexo():
-                print("O grafo é conexo.")
+                print("\nO grafo é conexo.")
             else:
-                print("O grafo não é conexo.")
+                print("\nO grafo não é conexo.")
+
         elif choice == "7":
-            v = input(f"Digite o vértice ({' '.join(graph.vertices)}): ").strip().upper()
+            v = input(f"\nDigite o vértice ({' '.join(graph.vertices)}): ").strip().upper()
             print(f"Grau do vértice {v}: {graph.grau_do_vertice(v)}")
+
         elif choice == "8":
             if graph.grafo_completo():
-                print("O grafo é completo.")
+                print("\nO grafo é completo.")
             else:
-                print("O grafo não é completo.")
+                print("\nO grafo não é completo.")
+
         elif choice == "9":
             if graph.grafo_regular():
-                print("O grafo é regular.")
+                print("\nO grafo é regular.")
             else:
-                print("O grafo não é regular.")
+                print("\nO grafo não é regular.")
+
         elif choice == "10":
             if graph.grafo_aciclico():
-                print("O grafo é acíclico.")
+                print("\nO grafo é acíclico.")
             else:
-                print("O grafo não é acíclico.")
+                print("\nO grafo não é acíclico.")
+
         elif choice == "11":
-            start = input(f"Digite o vértice inicial ({' '.join(graph.vertices)}): ").strip().upper()
+            start = input(f"\nDigite o vértice inicial ({' '.join(graph.vertices)}): ").strip().upper()
             graph.busca_em_profundidade(start)
         elif choice == "12":
-            start = input(f"Digite o vértice inicial ({' '.join(graph.vertices)}): ").strip().upper()
+            start = input(f"\nDigite o vértice inicial ({' '.join(graph.vertices)}): ").strip().upper()
             graph.busca_em_largura(start)
         
         elif choice == "13":
             if graph.grafo_euleriano():
-                print("O grafo é euleriano.")
+                print("\nO grafo é euleriano.")
             else:
-                print("O grafo não é euleriano.")
+                print("\nO grafo não é euleriano.")
         
         elif choice == "14":
             graph.print_all_pairs_shortest_paths()
 
-
-        
         elif choice == "15":
-            print("Saindo do programa. Até logo!")
+            print("\nSaindo do programa. Até logo!")
             break
         else:
             print("Opção inválida. Tente novamente.")
+
+        gerar_dot(graph)
+        endVerificator = int(input("\n1 Voltar para o Menu \n2 Encerrar\n"))
+        if endVerificator == "2":
+            print("Saindo do programa. Até logo!")
+            break
 
 if __name__ == "__main__":
     main()

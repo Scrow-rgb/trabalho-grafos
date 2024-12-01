@@ -26,8 +26,8 @@ def gerar_dot(grafo_obj):
                     
                     # Se for um grafo ponderado, inclui o peso na aresta
                     if peso != 1:  # Se o peso não for o valor padrão (1), considera ponderado
-                        arquivo.write(f"    {i} {operador} {j} [penwidth=3, color=black, label=\"{peso}\"];\n")
+                        arquivo.write(f"    {i} {operador} {j} [penwidth=2, color=black, label=\"{peso}\"];\n")
                     else:
-                        arquivo.write(f"    {i} {operador} {j} [penwidth=3, color=black];\n")
+                        arquivo.write(f"    {i} {operador} {j} [penwidth=2, color=black];\n")
         
         arquivo.write("}")
