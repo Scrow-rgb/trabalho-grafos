@@ -10,7 +10,8 @@ def gerar_dot(grafo_obj):
 
         # Estilização dos nós
         for i in range(len(grafo_obj.adj_matrix)):
-            arquivo.write(f"    {i} [label=\"{grafo_obj.vertices[i]}\", penwidth=2, shape=\"circle\"];\n")
+            peso = grafo_obj.weights.get(grafo_obj.vertices[i], 0)
+            arquivo.write(f"    {i} [label=\"{grafo_obj.vertices[i]} (Peso: {peso})\", penwidth=2, shape=\"circle\"];\n")
 
         # Estilização das arestas
         for i in range(len(grafo_obj.adj_matrix)):

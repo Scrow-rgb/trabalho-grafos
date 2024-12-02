@@ -1,6 +1,5 @@
 import heapq
 from collections import defaultdict, deque
-
 from exporter import gerar_dot
 
 
@@ -17,6 +16,7 @@ class Graph:
         self.vertex_map = {v: i for i, v in enumerate(self.vertices)}
         self.vertex_reverse_map = {i: v for i, v in enumerate(self.vertices)}
         self.edge_weights = {}
+        self.weights = {}
 
     def add_edge(self, u, v, weight=1):
         """Adiciona uma aresta entre os vértices u e v."""
@@ -29,6 +29,22 @@ class Graph:
         self.edge_weights[(u, v)] = weight
         if not self.is_directed:
             self.edge_weights[(v, u)] = weight  # Aresta bidirecional para grafos não direcionados
+    
+    
+    def set_vertex_weight(self, vertex, weight):
+        """Define o peso de um vértice"""
+        if vertex in self.vertices:
+            self.weights[vertex] = weight
+        else:
+            print(f"Vértice {vertex} não encontrado!")
+
+    def set_vertex_label(self, vertex, label):
+        """Define a etiqueta (rótulo) do vértice"""
+        # Aqui podemos usar um dicionário para armazenar a rotulação
+        if vertex in self.vertices:
+            self.vertex_labels[vertex] = label
+        else:
+            print(f"Vértice {vertex} não encontrado!")
 
     def remove_edge(self, u, v):
         """Remove a aresta entre os vértices u e v."""
@@ -174,14 +190,15 @@ class Graph:
     
     def floyd_warshall(self):
         """Calcula as menores distâncias entre todos os pares de vértices."""
-        dist = [row[:] for row in self.adj_matrix]  # Cria uma cópia da matriz de adjacência
+        # Cria uma cópia da matriz de adjacência
+        dist = [row[:] for row in self.adj_matrix]
 
         # Aplica o algoritmo de Floyd-Warshall
         for k in range(self.num_vertices):
             for i in range(self.num_vertices):
                 for j in range(self.num_vertices):
-                    if dist[i][j] > dist[i][k] + dist[k][j]:
-                        dist[i][j] = dist[i][k] + dist[k][j]
+                    if dist[i][k] != float('inf') and dist[k][j] != float('inf'):
+                        dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
 
         return dist
 
@@ -195,6 +212,18 @@ class Graph:
                     print(f"De {self.vertices[i]} para {self.vertices[j]}: Infinito")
                 else:
                     print(f"De {self.vertices[i]} para {self.vertices[j]}: {dist[i][j]}")
+    
+    
+    def adjacent(self, u, v):
+        """
+        Verifica se os vértices u e v são adjacentes.
+        u e v são índices ou rótulos de vértices.
+        """
+        u_index = self.vertices.index(u)
+        v_index = self.vertices.index(v)
+        return self.adj_matrix[u_index][v_index] != 0 and self.adj_matrix[u_index][v_index] != float('inf')
+
+
 
 
 
@@ -226,15 +255,25 @@ def main():
         print("12. Busca em largura")
         print("13. Grafo Euleriano")
         print("14. Calcular menor distância (Floyd Warshall)")
-        print("15. Sair")
+        print("15. Verificar adjacência entre vértices")
+        print("16. Sair")
 
         choice = input("Escolha uma opção: ").strip()
 
         if choice == "1":
             u = input(f"Digite o vértice de origem ({' '.join(graph.vertices)}): ").strip().upper()
             v = input(f"Digite o vértice de destino ({' '.join(graph.vertices)}): ").strip().upper()
+
+            # Definindo o peso do vértice
+            peso = int(input("Digite o peso do vértice (ou 0 para padrão): "))
+            graph.set_vertex_weight(u, peso)
+            graph.set_vertex_weight(v, peso)
+
+            # Definindo o peso da aresta
             weight = int(input("Digite o peso da aresta (ou 1 para padrão): "))
             graph.add_edge(u, v, weight)
+
+           
             print("Aresta adicionada com sucesso!")
 
         elif choice == "2":
@@ -301,18 +340,29 @@ def main():
         
         elif choice == "14":
             graph.print_all_pairs_shortest_paths()
-
+        
         elif choice == "15":
+            u = input("Digite o primeiro vértice: ").strip().upper()
+            v = input("Digite o segundo vértice: ").strip().upper()
+            if u not in graph.vertices or v not in graph.vertices:
+                print("Um ou ambos os vértices não existem no grafo.")
+            elif graph.adjacent(u, v):  # Corrigido para chamar o método do objeto `graph`
+                print(f"Os vértices {u} e {v} são adjacentes.")
+            else:
+                print(f"Os vértices {u} e {v} não são adjacentes.")
+
+        elif choice == "16":    
             print("\nSaindo do programa. Até logo!")
             break
         else:
-            print("Opção inválida. Tente novamente.")
+                print("Opção inválida. Tente novamente.")
 
         gerar_dot(graph)
         endVerificator = int(input("\n1 Voltar para o Menu \n2 Encerrar\n"))
-        if endVerificator == "2":
+        if endVerificator == 2:
             print("Saindo do programa. Até logo!")
             break
+
 
 if __name__ == "__main__":
     main()
