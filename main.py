@@ -224,11 +224,6 @@ class Graph:
         return self.adj_matrix[u_index][v_index] != 0 and self.adj_matrix[u_index][v_index] != float('inf')
 
 
-
-
-
-
-
 def main():
     print("Bem-vindo ao gerenciador de grafos!")
     num_vertices = int(input("Digite o número de vértices do grafo: "))
@@ -265,7 +260,7 @@ def main():
             v = input(f"Digite o vértice de destino ({' '.join(graph.vertices)}): ").strip().upper()
 
             # Definindo o peso do vértice
-            peso = int(input("Digite o peso do vértice (ou 0 para padrão): "))
+            peso = int(input("Digite o peso do vértice (ou 1 para padrão): "))
             graph.set_vertex_weight(u, peso)
             graph.set_vertex_weight(v, peso)
 
@@ -346,7 +341,7 @@ def main():
             v = input("Digite o segundo vértice: ").strip().upper()
             if u not in graph.vertices or v not in graph.vertices:
                 print("Um ou ambos os vértices não existem no grafo.")
-            elif graph.adjacent(u, v):  # Corrigido para chamar o método do objeto `graph`
+            elif graph.adjacent(u, v):
                 print(f"Os vértices {u} e {v} são adjacentes.")
             else:
                 print(f"Os vértices {u} e {v} não são adjacentes.")

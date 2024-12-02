@@ -1,13 +1,8 @@
-digraph G {
+graph G {
     0 [label="A", penwidth=2, shape="circle"];
     1 [label="B", penwidth=2, shape="circle"];
     2 [label="C", penwidth=2, shape="circle"];
-    3 [label="D", penwidth=2, shape="circle"];
-    4 [label="E", penwidth=2, shape="circle"];
-    5 [label="F", penwidth=2, shape="circle"];
-    6 [label="G", penwidth=2, shape="circle"];
-    7 [label="H", penwidth=2, shape="circle"];
-    8 [label="I", penwidth=2, shape="circle"];
-    9 [label="J", penwidth=2, shape="circle"];
-    0 -> 1 [penwidth=2, color=black];
+    0 -- 1 [penwidth=2, color=black, label="2"];
+    0 -- 2 [penwidth=2, color=black, label="4"];
+    1 -- 2 [penwidth=2, color=black, label="5"];
 }
