@@ -206,10 +206,10 @@ class Graph:
         odd_degree_vertices = sum(1 for v in self.vertices if self.grau_do_vertice(v) % 2 != 0)
 
         if odd_degree_vertices == 0:
-            return "É Euleriano"  # Todos os vértices têm grau par
+            return "\nÉ Euleriano"  # Todos os vértices têm grau par
         
         else:
-            return 'Não é Euleriano'  # Não é euleriano
+            return '\nNão é Euleriano'  # Não é euleriano
 
     
     def floyd_warshall(self):
@@ -258,6 +258,7 @@ def main():
     print("Bem-vindo ao gerenciador de grafos!")
     num_vertices = int(input("Digite o número de vértices do grafo: "))
     is_directed = input("O grafo é direcionado? (s/n): ").strip().lower() == 's'
+    edges_are_directed = input("Arestas possuem peso?(s) Vertices possuem peso?(n): ").strip().lower() == 's'
     graph = Graph(num_vertices, is_directed)
     # gerar_dot(graph)
     print("\nOs vértices do grafo serão identificados automaticamente como:")
@@ -288,36 +289,36 @@ def main():
         if choice == "1":
             u = input(f"Digite o vértice de origem ({' '.join(graph.vertices)}): ").strip().upper()
             v = input(f"Digite o vértice de destino ({' '.join(graph.vertices)}): ").strip().upper()
+            if not edges_are_directed:
+                weight = 1
+                # Definindo o peso do vértice com validação
+                while True:
+                    try:
+                        peso = input("Digite o peso do vértice (ou 1 para padrão): ").strip()
+                        if peso == "":
+                            peso = 1  # Usa o padrão
+                        else:
+                            peso = int(peso)
+                        break
+                    except ValueError:
+                        print("Entrada inválida! Por favor, digite um número inteiro.")
+                graph.set_vertex_weight(u, peso)
+                graph.set_vertex_weight(v, peso)
 
-            # Definindo o peso do vértice com validação
-            while True:
-                try:
-                    peso = input("Digite o peso do vértice (ou 1 para padrão): ").strip()
-                    if peso == "":
-                        peso = 1  # Usa o padrão
-                    else:
-                        peso = int(peso)
-                    break
-                except ValueError:
-                    print("Entrada inválida! Por favor, digite um número inteiro.")
-
-            graph.set_vertex_weight(u, peso)
-            graph.set_vertex_weight(v, peso)
-
-            # Definindo o peso da aresta com validação
-            while True:
-                try:
-                    weight = input("Digite o peso da aresta (ou 1 para padrão): ").strip()
-                    if weight == "":
-                        weight = 1  # Usa o padrão
-                    else:
-                        weight = int(weight)
-                    break
-                except ValueError:
-                    print("Entrada inválida! Por favor, digite um número inteiro.")
-
+            else:
+                # Definindo o peso da aresta com validação
+                while True:
+                    try:
+                        weight = input("Digite o peso da aresta (ou 1 para padrão): ").strip()
+                        if weight == "":
+                            weight = 1  # Usa o padrão
+                        else:
+                            weight = int(weight)
+                        break
+                    except ValueError:
+                        print("Entrada inválida! Por favor, digite um número inteiro.")
+                
             graph.add_edge(u, v, weight)
-
             print("Aresta adicionada com sucesso!")
 
 
