@@ -1,7 +1,6 @@
-graph G {
-    0 [label="A", penwidth=2, shape="circle"];
-    1 [label="B p:4", penwidth=2, shape="circle"];
-    2 [label="C", penwidth=2, shape="circle"];
-    0 -- 1 [penwidth=2, color=black];
-    1 -- 2 [penwidth=2, color=black];
+digraph G {
+    0 [label = "A p:2";penwidth = 2;shape = "circle";];
+    1 [label = "B p:3";penwidth = 2;shape = "circle";];
+    2 [label = "C";penwidth = 2;shape = "circle";];
+    0 -> 1 [penwidth = 2; color = black; label = "5";];
 }

@@ -38,13 +38,17 @@ class Graph:
         else:
             print(f"Vértice {vertex} não encontrado!")
 
-    def set_vertex_label(self, vertex, label):
-        """Define a etiqueta (rótulo) do vértice"""
-        # Aqui podemos usar um dicionário para armazenar a rotulação
-        if vertex in self.vertices:
-            self.vertex_labels[vertex] = label
-        else:
-            print(f"Vértice {vertex} não encontrado!")
+    def get_vertex_weight(self, vertex):
+        """Obtém o peso de um vértice."""
+        return self.vertex_weights.get(vertex, 1)  # Retorna 1 se o peso não for definido
+    
+    # def set_vertex_label(self, vertex, label):
+    #     """Define a etiqueta (rótulo) do vértice"""
+    #     # Aqui podemos usar um dicionário para armazenar a rotulação
+    #     if vertex in self.vertices:
+    #         self.vertex_labels[vertex] = label
+    #     else:
+    #         print(f"Vértice {vertex} não encontrado!")
 
     def remove_edge(self, u, v):
         """Remove a aresta entre os vértices u e v."""
@@ -210,40 +214,7 @@ class Graph:
         
         else:
             return '\nNão é Euleriano'  # Não é euleriano
-
-    
-    def floyd_warshall(self):
-        """Calcula as menores distâncias entre todos os pares de vértices."""
-        # Inicializa a matriz de distâncias como uma cópia da matriz de adjacência
-        dist = [row[:] for row in self.adj_matrix]
-
-        # Garante que a diagonal principal é zero
-        for i in range(self.num_vertices):
-            dist[i][i] = 0
-
-        # Aplica o algoritmo de Floyd-Warshall
-        for k in range(self.num_vertices):
-            for i in range(self.num_vertices):
-                for j in range(self.num_vertices):
-                    if dist[i][k] != float('inf') and dist[k][j] != float('inf'):
-                        dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
-
-        return dist
-
-    def print_all_pairs_shortest_paths(self):
-        """Exibe as menores distâncias entre todos os pares de vértices."""
-        dist = self.floyd_warshall()
-        print("Menores distâncias entre todos os pares de vértices:")
-        for i in range(self.num_vertices):
-            for j in range(self.num_vertices):
-                if dist[i][j] == float('inf'):
-                    print(f"De {self.vertices[i]} para {self.vertices[j]}: ∞")
-                else:
-                    print(f"De {self.vertices[i]} para {self.vertices[j]}: {dist[i][j]}")
-
-
         
-    
     def adjacent(self, u, v):
         """
         Verifica se os vértices u e v são adjacentes.
@@ -253,6 +224,44 @@ class Graph:
         v_index = self.vertices.index(v)
         return self.adj_matrix[u_index][v_index] != 0 and self.adj_matrix[u_index][v_index] != float('inf')
 
+    # Printing the solution
+    def print_solution(self, distance, INF=999):
+        # Labels dos vértices
+        labels = [chr(65 + i) for i in range(self.num_vertices)]  # Gera letras A, B, C...
+        
+        # Cabeçalho da tabela
+        print("   ", "  ".join(labels))  # Espaço inicial para alinhar com as linhas
+        for i in range(self.num_vertices):
+            # Imprime o rótulo da linha
+            print(f"{labels[i]} [", end="")
+            # Imprime os valores da matriz para a linha i
+            for j in range(self.num_vertices):
+                if distance[i][j] == INF:
+                    print("INF", end=", " if j < self.num_vertices - 1 else "")
+                else:
+                    print(distance[i][j], end=", " if j < self.num_vertices - 1 else "")
+            print("]")
+       
+    def convert_matrix_to_inf(self, matrix, INF=999):
+        num_vertices = len(matrix)
+        converted_matrix = [row[:] for row in matrix]  # Cria uma cópia da matriz
+        for i in range(num_vertices):
+            for j in range(num_vertices):
+                if i != j and converted_matrix[i][j] == 0:
+                    converted_matrix[i][j] = INF
+        return converted_matrix 
+         
+    # Floyd Algorithm implementation
+    def floyd_warshall(self):
+        distance = list(map(lambda i: list(map(lambda j: j, i)), self.convert_matrix_to_inf(self.adj_matrix)))
+
+        # Adding vertices individually
+        for k in range(self.num_vertices):
+            for i in range(self.num_vertices):
+                for j in range(self.num_vertices):
+                    distance[i][j] = min(distance[i][j], distance[i][k] + distance[k][j])
+        self.print_solution(distance)
+    
 
 def main():
     print("Bem-vindo ao gerenciador de grafos!")
@@ -289,38 +298,65 @@ def main():
         if choice == "1":
             u = input(f"Digite o vértice de origem ({' '.join(graph.vertices)}): ").strip().upper()
             v = input(f"Digite o vértice de destino ({' '.join(graph.vertices)}): ").strip().upper()
+            
             if not edges_are_directed:
-                weight = 1
-                # Definindo o peso do vértice com validação
+                # Definindo o peso do vértice de origem com validação
                 while True:
                     try:
-                        peso = input("Digite o peso do vértice (ou 1 para padrão): ").strip()
-                        if peso == "":
-                            peso = 1  # Usa o padrão
+                        peso1 = input("Digite o peso do vértice de origem (ou 1 para padrão): ").strip()
+                        if peso1 == "":
+                            peso1 = 1  # Usa o padrão
                         else:
-                            peso = int(peso)
+                            peso1 = int(peso1)
                         break
                     except ValueError:
                         print("Entrada inválida! Por favor, digite um número inteiro.")
-                graph.set_vertex_weight(u, peso)
-                graph.set_vertex_weight(v, peso)
+
+                # Definindo o peso do vértice de destino com validação
+                while True:
+                    try:
+                        peso2 = input("Digite o peso do vértice de destino (ou 1 para padrão): ").strip()
+                        if peso2 == "":
+                            peso2 = 1  # Usa o padrão
+                        else:
+                            peso2 = int(peso2)
+                        break
+                    except ValueError:
+                        print("Entrada inválida! Por favor, digite um número inteiro.")
+
+                # Definindo o peso da aresta com validação
+                while True:
+                    try:
+                        pesoA = input("Digite o peso da aresta (ou 1 para padrão): ").strip()
+                        if pesoA == "":
+                            pesoA = 1  # Usa o padrão
+                        else:
+                            pesoA = int(pesoA)
+                        break
+                    except ValueError:
+                        print("Entrada inválida! Por favor, digite um número inteiro.")
+
+                # Atribuindo os pesos dos vértices e da aresta
+                graph.set_vertex_weight(u, peso1)
+                graph.set_vertex_weight(v, peso2)
+                weight = pesoA
 
             else:
-                # Definindo o peso da aresta com validação
+                # Definindo o peso da aresta com validação em grafos direcionados
                 while True:
                     try:
                         weight = input("Digite o peso da aresta (ou 1 para padrão): ").strip()
                         if weight == "":
-                            weight = 1  # Usa o padrão
+                            weight = 1
                         else:
                             weight = int(weight)
                         break
                     except ValueError:
                         print("Entrada inválida! Por favor, digite um número inteiro.")
-                
+            
+            # Adicionando a aresta ao grafo
             graph.add_edge(u, v, weight)
             print("Aresta adicionada com sucesso!")
-
 
         elif choice == "2":
             u = input(f"Digite o vértice de origem ({' '.join(graph.vertices)}): ").strip().upper()
@@ -388,7 +424,8 @@ def main():
             print(graph.grafo_euleriano())
         
         elif choice == "14":
-            graph.print_all_pairs_shortest_paths()
+            #graph.print_all_pairs_shortest_paths()
+            graph.floyd_warshall()
         
         elif choice == "15":
             u = input("Digite o primeiro vértice: ").strip().upper()
