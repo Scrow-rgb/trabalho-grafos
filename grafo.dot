@@ -1,8 +1,0 @@
-graph G {
-    0 [label="A", penwidth=2, shape="circle"];
-    1 [label="B", penwidth=2, shape="circle"];
-    2 [label="C", penwidth=2, shape="circle"];
-    0 -- 1 [penwidth=2, color=black, label="2"];
-    0 -- 2 [penwidth=2, color=black, label="4"];
-    1 -- 2 [penwidth=2, color=black, label="5"];
-}
