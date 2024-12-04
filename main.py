@@ -121,8 +121,8 @@ class Graph:
                 return False
         return True
 
-    def grafo_aciclico(self):
-        """Verifica se o grafo é acíclico (somente para grafos direcionados)."""
+    def _grafo_direcionado_aciclico(self):
+        """Verifica se um grafo direcionado é acíclico."""
         def dfs(v, visited, rec_stack):
             visited.add(v)
             rec_stack.add(v)
@@ -141,6 +141,27 @@ class Graph:
         for vertex in self.vertices:
             if vertex not in visited:
                 if dfs(vertex, visited, rec_stack):
+                    return False
+        return True
+
+    def _grafo_nao_direcionado_aciclico(self):
+        """Verifica se um grafo não direcionado é acíclico."""
+        def dfs(v, visited, parent):
+            visited.add(v)
+
+            for neighbor, _ in self.adj_list[v]:
+                if neighbor not in visited:
+                    if dfs(neighbor, visited, v):
+                        return True
+                elif neighbor != parent:
+                    return True
+            return False
+
+        visited = set()
+
+        for vertex in self.vertices:
+            if vertex not in visited:
+                if dfs(vertex, visited, None):
                     return False
         return True
 
@@ -344,10 +365,16 @@ def main():
                 print("\nO grafo não é regular.")
 
         elif choice == "10":
-            if graph.grafo_aciclico():
-                print("\nO grafo é acíclico.")
+            if not is_directed :
+                if graph._grafo_nao_direcionado_aciclico():
+                    print("\nO grafo é acíclico.")
+                else:
+                    print("\nO grafo não é acíclico.")
             else:
-                print("\nO grafo não é acíclico.")
+                if graph._grafo_direcionado_aciclico():
+                    print("\nO grafo é acíclico.")
+                else:
+                    print("\nO grafo não é acíclico.")
 
         elif choice == "11":
             start = input(f"\nDigite o vértice inicial ({' '.join(graph.vertices)}): ").strip().upper()
