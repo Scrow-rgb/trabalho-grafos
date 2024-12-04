@@ -175,23 +175,30 @@ class Graph:
                     
                     
     def grafo_euleriano(self):
-        """Verifica se o grafo é euleriano (caminho ou circuito euleriano)."""
+        
+        
+        # Verificar se o grafo é conexo
         if not self.grafo_conexo():
-            return False  # O grafo precisa ser conexo
+            return 'Grafo precisa ser conexo'
 
-        odd_degree_vertices = 0
-        for v in self.vertices:
-            if self.grau_do_vertice(v) % 2 != 0:
-                odd_degree_vertices += 1
+        # Contar vértices com grau ímpar
+        odd_degree_vertices = sum(1 for v in self.vertices if self.grau_do_vertice(v) % 2 != 0)
 
-        # Para caminho euleriano, o grafo deve ter exatamente dois vértices de grau ímpar
-        # Para circuito euleriano, o grafo deve ter zero vértices de grau ímpar
-        return odd_degree_vertices == 0 or odd_degree_vertices == 2
+        if odd_degree_vertices == 0:
+            return "É Euleriano"  # Todos os vértices têm grau par
+        
+        else:
+            return 'Não é Euleriano'  # Não é euleriano
+
     
     def floyd_warshall(self):
         """Calcula as menores distâncias entre todos os pares de vértices."""
-        # Cria uma cópia da matriz de adjacência
+        # Inicializa a matriz de distâncias como uma cópia da matriz de adjacência
         dist = [row[:] for row in self.adj_matrix]
+
+        # Garante que a diagonal principal é zero
+        for i in range(self.num_vertices):
+            dist[i][i] = 0
 
         # Aplica o algoritmo de Floyd-Warshall
         for k in range(self.num_vertices):
@@ -209,10 +216,12 @@ class Graph:
         for i in range(self.num_vertices):
             for j in range(self.num_vertices):
                 if dist[i][j] == float('inf'):
-                    print(f"De {self.vertices[i]} para {self.vertices[j]}: Infinito")
+                    print(f"De {self.vertices[i]} para {self.vertices[j]}: ∞")
                 else:
                     print(f"De {self.vertices[i]} para {self.vertices[j]}: {dist[i][j]}")
-    
+
+
+        
     
     def adjacent(self, u, v):
         """
@@ -259,17 +268,37 @@ def main():
             u = input(f"Digite o vértice de origem ({' '.join(graph.vertices)}): ").strip().upper()
             v = input(f"Digite o vértice de destino ({' '.join(graph.vertices)}): ").strip().upper()
 
-            # Definindo o peso do vértice
-            peso = int(input("Digite o peso do vértice (ou 1 para padrão): "))
+            # Definindo o peso do vértice com validação
+            while True:
+                try:
+                    peso = input("Digite o peso do vértice (ou 1 para padrão): ").strip()
+                    if peso == "":
+                        peso = 1  # Usa o padrão
+                    else:
+                        peso = int(peso)
+                    break
+                except ValueError:
+                    print("Entrada inválida! Por favor, digite um número inteiro.")
+
             graph.set_vertex_weight(u, peso)
             graph.set_vertex_weight(v, peso)
 
-            # Definindo o peso da aresta
-            weight = int(input("Digite o peso da aresta (ou 1 para padrão): "))
+            # Definindo o peso da aresta com validação
+            while True:
+                try:
+                    weight = input("Digite o peso da aresta (ou 1 para padrão): ").strip()
+                    if weight == "":
+                        weight = 1  # Usa o padrão
+                    else:
+                        weight = int(weight)
+                    break
+                except ValueError:
+                    print("Entrada inválida! Por favor, digite um número inteiro.")
+
             graph.add_edge(u, v, weight)
 
-           
             print("Aresta adicionada com sucesso!")
+
 
         elif choice == "2":
             u = input(f"Digite o vértice de origem ({' '.join(graph.vertices)}): ").strip().upper()
@@ -328,10 +357,7 @@ def main():
             graph.busca_em_largura(start)
         
         elif choice == "13":
-            if graph.grafo_euleriano():
-                print("\nO grafo é euleriano.")
-            else:
-                print("\nO grafo não é euleriano.")
+            print(graph.grafo_euleriano())
         
         elif choice == "14":
             graph.print_all_pairs_shortest_paths()
